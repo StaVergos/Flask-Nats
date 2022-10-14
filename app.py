@@ -1,7 +1,7 @@
 from flask import Flask, request
 import asyncio
 
-from services.nats_test import main
+from services.nats_pub import publish_nats
 
 app = Flask(__name__)
 
@@ -11,10 +11,11 @@ def index():
     return 'Hello there!'
 
 
-@app.route('/async')
-def async_call():
+@app.route('/sw_req')
+def sw_req():
     json_data = request.get_json()
     people_id = json_data['people_id']
-    asyncio.run(main(people_id))
+    asyncio.run(publish_nats(people_id))
 
-    return 'Run async'
+    return 'Runned sw_req'
+
