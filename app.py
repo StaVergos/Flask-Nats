@@ -1,7 +1,6 @@
-from flask import Flask
+from flask import Flask, request
 import asyncio
 
-from services.nats_service import nats_handler
 from services.nats_test import main
 
 app = Flask(__name__)
@@ -9,11 +8,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return 'Hi, from first api'
+    return 'Hello there!'
 
 
 @app.route('/async')
 def async_call():
-    asyncio.run(main())
+    json_data = request.get_json()
+    people_id = json_data['people_id']
+    asyncio.run(main(people_id))
 
     return 'Run async'
