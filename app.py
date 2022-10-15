@@ -18,4 +18,3 @@ def sw_req():
     asyncio.run(publish_nats(people_id))
 
     return 'Runned sw_req'
-
