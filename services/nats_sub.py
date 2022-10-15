@@ -20,15 +20,11 @@ async def main():
         data = msg.data.decode()
         print("Received a message on '{subject} {reply}': {data}".format(
             subject=subject, reply=reply, data=data))
-        await msg.respond(b'I can help!')
+        # await msg.respond(b'I can help!')
 
     # Basic subscription to receive all published messages
     # which are being sent to a single topic 'discover'
     await nc.subscribe("help", cb=subscribe_handler)
-
-    # Subscription on queue named 'workers' so that
-    # one subscriber handles message a request at a time.
-    await nc.subscribe("help.*", "workers", subscribe_handler)
 
     def signal_handler():
         if nc.is_closed:
@@ -39,9 +35,7 @@ async def main():
     for sig in ('SIGINT', 'SIGTERM'):
         asyncio.get_running_loop().add_signal_handler(getattr(signal, sig), signal_handler)
 
-    await nc.request("help", b'help')
-
-    await asyncio.sleep(30)
+    await asyncio.sleep(900)
 
 if __name__ == '__main__':
     try:
