@@ -32,10 +32,8 @@ async def main():
         print("Disconnecting...")
         asyncio.create_task(nc.close())
 
-    for sig in ('SIGINT', 'SIGTERM'):
-        asyncio.get_running_loop().add_signal_handler(getattr(signal, sig), signal_handler)
-
-    await asyncio.sleep(900)
+    # Keep it running forever
+    await asyncio.Event().wait()
 
 if __name__ == '__main__':
     try:
