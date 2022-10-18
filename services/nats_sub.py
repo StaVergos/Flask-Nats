@@ -24,7 +24,7 @@ async def main():
 
     # Basic subscription to receive all published messages
     # which are being sent to a single topic 'discover'
-    await nc.subscribe("help", cb=subscribe_handler)
+    await nc.subscribe("swapi", cb=subscribe_handler)
 
     def signal_handler():
         if nc.is_closed:
