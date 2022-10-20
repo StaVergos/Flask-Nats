@@ -1,38 +1,28 @@
 import asyncio
 
 import nats
-from nats.errors import TimeoutError, NoRespondersError
+from nats.errors import ConnectionClosedError, NoServersError, TimeoutError
 
 
 async def main():
     nc = await nats.connect("0.0.0.0:4222")
 
-    async def greet_handler(msg):
-      name = msg.subject[6:]
-      reply = f'Hello, {name}'
-      await msg.respond(reply.encode("utf8"))
-
-    sub = await nc.subscribe("greet.*", cb=greet_handler)
-
-    rep = await nc.request("greet.joe", b'', timeout=0.5)
-    print(f"{rep.data}")
-
-    rep = await nc.request("greet.sue", b'', timeout=0.5)
-    print(f"{rep.data}")
-
-    await sub.drain()
+    async def message_handler(msg):
+        subject = msg.subject
+        reply = msg.reply
+        data = msg.data.decode()
+        print("Received a message on '{subject} {reply}': {data}".format(
+            subject=subject, reply=reply, data=data))
 
     try:
-        await nc.request("greet.joe", b'', timeout=0.5)
-    except NoRespondersError:
-        print("no responders")
+        response = await nc.request("help", b'help me', timeout=0.5)
+        print("Received response: {message}".format(
+            message=response.data.decode()))
+    except TimeoutError:
+        print("Request timed out")
 
+    # Terminate connection to NATS.
     await nc.drain()
-
-
-if __name__ == '__main__':
-    asyncio.run(main())
-
 
 if __name__ == '__main__':
     asyncio.run(main())
